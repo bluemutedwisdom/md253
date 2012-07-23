@@ -11,5 +11,5 @@ DATE_CONF=/etc/sysconfig/config/date.conf
 mydate=`/bin/cat $DATE_CONF`
 mysettime $mydate
 /bin/date "$mm$dd$HH$MM$yy"
-/bin/logger "$0 - Initial System Date :\"`date`\""
+/usr/bin/logger "$0 - Initial System Date :\"`date`\""
 }

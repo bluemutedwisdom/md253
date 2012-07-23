@@ -40,7 +40,7 @@ done
 NTP_ACTION=`cat ${NTP_ACTION_CONF}`
 [ "${NTP_ACTION}" == "auto" ] || exit 0
 
-/bin/ntpdate ${NTP_CONF}
+/usr/bin/ntpdate ${NTP_CONF}
 [ $? -eq 0 ] || {
  for ser in ${NTP_SERVER}; do
   echo "${ser}" > /etc/sysconfig/config/ntp.conf
@@ -75,8 +75,8 @@ date "$mm$dd$HH$MM$yy" >/dev/null 2>&1
 /bin/rm -rf $tmpfile
 
 /bin/test -f ${DST_CONF} && {
- OLD_START_DST_DATE=`/bin/awk -F= /START/'{print $2}' ${DST_CONF}`
- OLD_END_DST_DATE=`/bin/awk -F= /END/'{print $2}' ${DST_CONF}`
+ OLD_START_DST_DATE=`/usr/bin/awk -F= /START/'{print $2}' ${DST_CONF}`
+ OLD_END_DST_DATE=`/usr/bin/awk -F= /END/'{print $2}' ${DST_CONF}`
  $replaceFile "${DST_CONF}" "START=$OLD_START_DST_DATE" "START=$START_DST_DATE"
  $replaceFile "${DST_CONF}" "END=$OLD_END_DST_DATE" "END=$OLD_END_DST_DATE"
  } || {

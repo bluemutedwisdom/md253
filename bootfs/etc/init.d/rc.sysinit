@@ -11,31 +11,32 @@ service_mount_rootfs
 service_mount_system
 service_syslogd_start
 
-/bin/buttons_daemon
+service_setcolor
+
+/usr/bin/udevd --daemon
+[ $? -eq 0 ] &&\
+ /usr/bin/logger "$0 - udevd deamon Start Succeed" ||\
+ /usr/bin/logger "$0 - udevd deamon Start Failed"
+
+network_start >/dev/null 2>&1
+service_ntp_start >/dev/null 2>&1 &
+
+KERNEL_PATH=/usr/lib/modules/2.6.24.4/kernel
+
+# Load USB kernel modules
+/sbin/insmod ${KERNEL_PATH}/usb-storage.ko >/dev/null 2>&1 &
+[ $? -eq 0 ] &&\
+ /usr/bin/logger "$0 - Insert USB Kernel Module Succeed" ||\
+ /usr/bin/logger "$0 - Insert USB Kernel Module Failed"
+/sbin/insmod ${KERNEL_PATH}/usblp.ko >/dev/null 2>&1 &
+
+/etc/sysconfig/system-script/cron-ntp >/dev/null 2>&1 &
+
+/usr/bin/buttons_daemon
 # mount HDD
 SMB_HDD_CONF=/etc/sysconfig/config/smb/hdd.inc
 SMB_SHARE_CONF=/etc/sysconfig/config/smb/shares.inc
 cat /dev/null > ${SMB_HDD_CONF}
 cat /dev/null > ${SMB_SHARE_CONF}
-service_mount_hdd
 
-KERNEL_PATH=/usr/lib/modules/2.6.24.4/kernel
-
-service_setcolor
-
-/bin/udevd --daemon
-[ $? -eq 0 ] &&\
- /bin/logger "$0 - udevd deamon Start Succeed" ||\
- /bin/logger "$0 - udevd deamon Start Failed"
-
-network_start >/dev/null 2>&1
-service_ntp_start >/dev/null 2>&1 &
-
-# Load USB kernel modules
-/sbin/insmod ${KERNEL_PATH}/usb-storage.ko >/dev/null 2>&1 &
-[ $? -eq 0 ] &&\
- /bin/logger "$0 - Insert USB Kernel Module Succeed" ||\
- /bin/logger "$0 - Insert USB Kernel Module Failed"
-/sbin/insmod ${KERNEL_PATH}/usblp.ko >/dev/null 2>&1 &
-
-/etc/sysconfig/system-script/cron-ntp >/dev/null 2>&1 &
+/etc/init.d/rc.services
